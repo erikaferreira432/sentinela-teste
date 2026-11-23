@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Hospital Sentinela</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <main class="container">
+
+    <div class="logo">
+      <img src="logoo.png" alt="Logo Hospital Sentinela">
+    </div>
+
+    <h2>Hospital Sentinela</h2>
+
+    <p class="subtitulo">Sistema de Atendimento</p>
+
+    <form id="formLogin">
+      <input
+        id="usuario"
+        name="usuario"
+        type="text"
+        placeholder="Usuário"
+        autocomplete="username"
+        aria-label="Usuário"
+        required
+      >
+
+      <input
+        id="senha"
+        name="senha"
+        type="password"
+        placeholder="Senha"
+        autocomplete="current-password"
+        aria-label="Senha"
+        required
+      >
+
+      <button id="btnEntrar" type="submit">
+        ENTRAR
+      </button>
+    </form>
+
+    <div id="mensagem" role="status" aria-live="polite"></div>
+
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("formLogin");
+      const usuarioInput = document.getElementById("usuario");
+      const senhaInput = document.getElementById("senha");
+      const btnEntrar = document.getElementById("btnEntrar");
+      const mensagem = document.getElementById("mensagem");
+
+      let enviando = false;
+
+      form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        if (enviando) return;
+
+        const usuario = usuarioInput.value.trim();
+        const senha = senhaInput.value;
+
+        mensagem.textContent = "";
+        mensagem.className = "";
+
+        if (!usuario || !senha.trim()) {
+          mensagem.textContent = "Preencha o usuário e a senha.";
+          mensagem.className = "erro";
+          return;
+        }
+
+        enviando = true;
+        btnEntrar.disabled = true;
+        btnEntrar.textContent = "ENTRANDO...";
+
+        try {
+          const response = await fetch("/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              usuario: usuario,
+              senha: senha
+            })
+          });
+
+          const data = await response.json().catch(() => ({}));
+
+          if (!response.ok) {
+            throw new Error(
+              data.erro ||
+              data.mensagem ||
+              "Usuário ou senha inválidos."
+            );
+          }
+
+          const paginas = {
+            triagem: "triagem.html",
+            medico: "medico.html",
+            atendimento: "atendimento.html"
+          };
+
+          if (!data.tipo || !paginas[data.tipo]) {
+            throw new Error(
+              "O servidor não retornou um tipo de usuário válido."
+            );
+          }
+
+          mensagem.textContent = "Login realizado com sucesso!";
+          mensagem.className = "sucesso";
+
+          window.location.href = paginas[data.tipo];
+
+        } catch (error) {
+          console.error("Erro no login:", error);
+
+          mensagem.textContent =
+            error.message ||
+            "Não foi possível conectar ao servidor. Tente novamente.";
+
+          mensagem.className = "erro";
+
+        } finally {
+          enviando = false;
+          btnEntrar.disabled = false;
+          btnEntrar.textContent = "ENTRAR";
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/atendimento",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/triagem",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/triagens",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/consulta",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/medicacoes",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/lista-medicacoes",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/internacao",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/alta",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/health",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/frontend/$1"
+    }
+  ]
+}
